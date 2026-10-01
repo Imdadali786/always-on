@@ -222,8 +222,8 @@
           <div class="pf"><span class="pi"><svg class="i" viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg></span><div><b>Every decision</b><span>Logged &amp; overridable</span></div></div>
         </div>
         <div class="side-foot">
-          <a class="cta" href="https://cal.com/syncnox/30min">Watch the agent run your day <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
-          <a class="lnk" href="#autonomy">How autonomy levels work <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          <a class="cta" href="https://cal.com/syncnox/30min" target="_blank" rel="noopener">Watch the agent run your day <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          <a class="lnk" href="#autonomy" data-parent-nav="#autonomy">How autonomy levels work <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
         </div>
       </div>
     </div>
@@ -305,5 +305,26 @@
 })();
 </script>
 
+<script>
+/* iframe helpers: report real height to the parent page, and pass in-page links up to it */
+(function(){
+  if(window.parent===window)return;
+  var last=0;
+  function send(){
+    var h=Math.ceil(document.documentElement.getBoundingClientRect().height);
+    if(h&&h!==last){last=h;window.parent.postMessage({syncnoxFrame:'agent',height:h},'*');}
+  }
+  if('ResizeObserver' in window){new ResizeObserver(send).observe(document.documentElement);}
+  window.addEventListener('load',send);
+  window.addEventListener('resize',send);
+  send();
+  document.addEventListener('click',function(e){
+    var a=e.target.closest&&e.target.closest('[data-parent-nav]');
+    if(!a)return;
+    e.preventDefault();
+    window.parent.postMessage({syncnoxNav:a.getAttribute('data-parent-nav')},'*');
+  });
+})();
+</script>
 </body>
 </html>
